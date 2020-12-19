@@ -11,19 +11,19 @@ import s from './App.module.css';
 export default function App() {
   const [pictures, setPictures] = useState([]);
   const [page, setPage] = useState(1);
-  const [query, setQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [largeImageURL, setLargeImageURL] = useState('');
 
   useEffect(() => {
-    if (!query) {
+    if (!searchQuery) {
       return;
     }
     const fetchPictures = () => {
       setIsLoading(true);
-      FetchApi(page, query)
+      FetchApi(searchQuery, page)
         .then(hits => {
           setPictures(prevPictures => [...prevPictures, ...hits]);
           scrollToNextPage();
@@ -33,17 +33,13 @@ export default function App() {
     };
 
     fetchPictures();
-  }, [query, page]);
-
-  // useEffect(() => {
-  //   // if (!page) {
-  //   //   scrollToNextPage();
-  //   // }
-  //   scrollToNextPage();
-  // });
+  }, [searchQuery, page]);
 
   const handleSearchBarSubmit = query => {
-    setQuery(query);
+    if (searchQuery === query) {
+      return;
+    }
+    setSearchQuery(query);
     setPage(1);
     setPictures([]);
     setError(null);
@@ -54,17 +50,6 @@ export default function App() {
     setIsLoading(true);
     setPage(prevPage => prevPage + 1);
   };
-
-  // const fetchPictures = () => {
-  //   setIsLoading(true);
-  //   FetchApi(page, searchQuery)
-  //     .then(hits => {
-  //       setPictures(prevPictures => [...prevPictures, ...hits]);
-  //       setPage(prevPage => prevPage + 1);
-  //     })
-  //     .catch(error => setError(error))
-  //     .finally(() => setIsLoading(false));
-  // };
 
   const scrollToNextPage = () => {
     window.scrollTo({
@@ -83,7 +68,8 @@ export default function App() {
   };
 
   const shouldRenderButton = pictures.length > 0 && !error;
-  const picIsNotFound = query && pictures.length === 0 && !error && !isLoading;
+  const picIsNotFound =
+    searchQuery && pictures.length === 0 && !error && !isLoading;
 
   return (
     <div className={s.App}>

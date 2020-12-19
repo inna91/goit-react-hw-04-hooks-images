@@ -21,7 +21,7 @@ function Searchbar({ onSubmit }) {
   };
 
   const handleChange = event => {
-    setQuery(event.currentTarget.value);
+    setQuery(event.target.value);
   };
 
   return (
